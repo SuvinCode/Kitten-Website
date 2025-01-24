@@ -1,0 +1,29 @@
+*{
+    margin:auto;
+    padding:0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: hsl(82, 42%, 58%);
+    min-width: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+img{
+    width:800px;
+    height:800px;
+    object-fit: center;
+}
+
+
+img:hover{
+    cursor: pointer;
+}
+
+.container{
+    height: 100vh;
+    
+}

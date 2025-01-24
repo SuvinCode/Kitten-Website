@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitten</title>
+    <style>
+    *{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    }
+
+    body{
+        background-color: hsl(82, 42%, 58%);
+        min-width: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    img{
+        width:800px;
+        height:800px;
+        object-fit: center;
+    }
+
+
+    img:hover{
+        cursor: pointer;
+    }
+
+    .container{
+        height: 100vh;
+        
+    }
+        body {
+            overflow: hidden; /* Prevent scrollbars */
+            position: relative;
+            height: 100vh;
+            margin: 0;
+        }
+        #snowflakes, #notes, #hearts, #stars, #pumpkins {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow clicks to go through */
+            display: none; /* Hide initially */
+        }
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            color: white;
+            font-size: 2em; /* Increased size of snowflakes */
+            opacity: 0.8;
+            pointer-events: none;
+            animation: fall linear infinite; /* Only fall animation */
+        }
+        .note {
+            position: absolute;
+            top: -10px;
+            color: black; /* Color of musical notes */
+            font-size: 6em; /* Extremely large size for musical notes */
+            opacity: 1; /* Start visible */
+            pointer-events: none;
+            animation: fall 4s linear infinite, fade-out 2s forwards; /* Rapid fall and fade-out */
+        }
+        .heart {
+            position: absolute;
+            top: -10px;
+            color: red; /* Color of hearts */
+            font-size: 10em; /* Extremely large size for hearts */
+            opacity: 1; /* Start fully visible */
+            pointer-events: none;
+            animation: pop 1.5s forwards; /* Pop animation */
+        }
+        .star {
+            position: absolute;
+            top: -10px;
+            color: gold; /* Color of stars */
+            font-size: 2em; /* Size for stars */
+            opacity: 1; /* Start fully visible */
+            pointer-events: none;
+            animation: pop 1s forwards; /* Rapid pop animation */
+        }
+        .pumpkin {
+            position: absolute;
+            top: -10px;
+            font-size: 3em; /* Size for pumpkins */
+            opacity: 1; /* Start visible */
+            pointer-events: none;
+            animation: fall 5s linear infinite; /* Falling animation */
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+        @keyframes fade-out {
+            0% {
+                opacity: 1; /* Start fully visible */
+            }
+            100% {
+                opacity: 0; /* Fully invisible */
+            }
+        }
+        @keyframes pop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.5); /* Scale up */
+            }
+            100% {
+                transform: scale(0); /* Scale down to disappear */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="snowflakes"></div>
+    <div id="notes"></div>
+    <div id="hearts"></div>
+    <div id="stars"></div>
+    <div id="pumpkins"></div>
+    <img id="image1" src="pinkfluffykittenhappy.png" alt="" onclick="changeImage()">
+    <script>
+        let audio = new Audio();
+        let isMuted = false; // Variable to track mute state
+        let snowflakesEnabled = false; // Variable to track snowflakes
+        let notesEnabled = false; // Variable to track musical notes
+        let heartsEnabled = false; // Variable to track hearts
+        let starsEnabled = false; // Variable to track stars
+        let pumpkinsEnabled = false; // Variable to track pumpkins
+
+        // Snowflake generation
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '&#10052;'; // Snowflake character
+            snowflake.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            snowflake.style.fontSize = Math.random() * 2 + 2 + 'em'; // Random size between 2em and 4em
+
+            // Set animation duration based on size
+            const fallDuration = Math.random() * 3 + 2; // Between 2s to 5s
+            snowflake.style.animationDuration = fallDuration + 's';
+
+            document.getElementById('snowflakes').appendChild(snowflake);
+
+            // Remove snowflake after falling
+            setTimeout(() => {
+                snowflake.remove();
+            }, fallDuration * 1000);
+        }
+
+        // Note generation
+        function createNote() {
+            const note = document.createElement('div');
+            note.className = 'note';
+            note.innerHTML = '&#9835;'; // Musical note character
+            note.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+
+            // Set animation duration for rapid fall
+            note.style.animationDuration = '4s'; // Rapid fall
+
+            document.getElementById('notes').appendChild(note);
+
+            // Remove note after falling and fading out
+            setTimeout(() => {
+                note.remove();
+            }, 6000); // Wait for fall duration + fade-out time
+        }
+
+        // Heart generation
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '&#10084;'; // Heart character
+            heart.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            heart.style.top = Math.random() * 100 + 'vh'; // Random vertical position
+
+            document.getElementById('hearts').appendChild(heart);
+
+            // Remove heart after popping
+            setTimeout(() => {
+                heart.remove();
+            }, 1500); // Duration of the pop animation
+        }
+
+        // Star generation
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.innerHTML = '&#9733;'; // Star character
+            star.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            star.style.top = Math.random() * 100 + 'vh'; // Random vertical position
+
+            document.getElementById('stars').appendChild(star);
+
+            // Remove star after popping
+            setTimeout(() => {
+                star.remove();
+            }, 1000); // Duration of the pop animation
+        }
+
+        // Pumpkin generation
+        function createPumpkin() {
+            const pumpkin = document.createElement('div');
+            pumpkin.className = 'pumpkin';
+            pumpkin.innerHTML = '&#127875;'; // Pumpkin character
+            pumpkin.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+
+            document.getElementById('pumpkins').appendChild(pumpkin);
+
+            // Remove pumpkin after falling
+            setTimeout(() => {
+                pumpkin.remove();
+            }, 5000); // Duration for falling
+        }
+
+        // Generate snowflakes, notes, hearts, stars, and pumpkins at intervals
+        let snowflakeInterval, noteInterval, heartInterval, starInterval, pumpkinInterval;
+        function startSnowflakes() {
+            if (!snowflakesEnabled) {
+                snowflakesEnabled = true;
+                document.getElementById('snowflakes').style.display = 'block';
+                snowflakeInterval = setInterval(createSnowflake, 300); // Create a snowflake every 300ms
+            }
+        }
+
+        function stopSnowflakes() {
+            snowflakesEnabled = false;
+            document.getElementById('snowflakes').style.display = 'none';
+            clearInterval(snowflakeInterval);
+        }
+
+        function startNotes() {
+            if (!notesEnabled) {
+                notesEnabled = true;
+                document.getElementById('notes').style.display = 'block';
+                noteInterval = setInterval(createNote, 300); // Create a note every 300ms
+            }
+        }
+
+        function stopNotes() {
+            notesEnabled = false;
+            document.getElementById('notes').style.display = 'none';
+            clearInterval(noteInterval);
+        }
+
+        function startHearts() {
+            if (!heartsEnabled) {
+                heartsEnabled = true;
+                document.getElementById('hearts').style.display = 'block';
+                heartInterval = setInterval(createHeart, 500); // Create a heart every 500ms
+            }
+        }
+
+        function stopHearts() {
+            heartsEnabled = false;
+            document.getElementById('hearts').style.display = 'none';
+            clearInterval(heartInterval);
+        }
+
+        function startStars() {
+            if (!starsEnabled) {
+                starsEnabled = true;
+                document.getElementById('stars').style.display = 'block';
+                starInterval = setInterval(createStar, 300); // Create a star every 300ms
+            }
+        }
+
+        function stopStars() {
+            starsEnabled = false;
+            document.getElementById('stars').style.display = 'none';
+            clearInterval(starInterval);
+        }
+
+        function startPumpkins() {
+            if (!pumpkinsEnabled) {
+                pumpkinsEnabled = true;
+                document.getElementById('pumpkins').style.display = 'block';
+                pumpkinInterval = setInterval(createPumpkin, 1000); // Create a pumpkin every 1000ms
+            }
+        }
+
+        function stopPumpkins() {
+            pumpkinsEnabled = false;
+            document.getElementById('pumpkins').style.display = 'none';
+            clearInterval(pumpkinInterval);
+        }
+
+        function changeImage() {
+            let randomNumber = Math.floor(Math.random() * 8) + 1;
+            let displayImage = document.getElementById('image1');
+
+            if (displayImage.src.match('pinkfluffykittenhappy')) {
+                if (randomNumber == 1) {
+                    displayImage.src = "pinkfluffykittenlovingeyes.png";
+                    document.querySelector('body').style.background = "url('valentinesbackground.png') center center / cover";
+                    audio.src = "Nightcore - Can't Help Falling In Love (Lyrics).mp3";
+                    stopSnowflakes(); // Stop snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                    stopPumpkins(); // Stop pumpkins
+                    startHearts(); // Start hearts
+                } else if (randomNumber == 2) {
+                    displayImage.src = "musiccat.png";
+                    document.querySelector('body').style.background = "url('musicbackground.png') center center / cover";
+                    audio.src = "Laufey - From The Start (Official Music Video).mp3";
+                    startNotes(); // Start notes
+                    stopSnowflakes(); // Stop snowflakes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                    stopPumpkins(); // Stop pumpkins
+                } else if (randomNumber == 3) {
+                    displayImage.src = "christmascat.png";
+                    document.querySelector('body').style.background = "url('christmasbackground.png') center center / cover";
+                    audio.src = "Bobby Helms - Jingle Bell Rock (Lyrics).mp3";
+                    startSnowflakes(); // Start snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                    stopPumpkins(); // Stop pumpkins
+                } else if (randomNumber == 4) {
+                    displayImage.src = "Partycat.png";
+                    document.querySelector('body').style.background = "url('birthdaybackground.png') center center / cover";
+                    audio.src = "Nightcore   Happy BirthdayKana Nishino.mp3";
+                    stopSnowflakes(); // Stop snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                    stopPumpkins(); // Stop pumpkins
+                } else if (randomNumber == 5) {
+                    displayImage.src = "spacecat.png";
+                    document.querySelector('body').style.background = "url('spacebackground.png') center center / cover";
+                    audio.src = "Hans Zimmer - Interstellar - Main Theme (Piano Version)  Sheet Music.mp3";
+                    startStars(); // Start stars
+                    stopSnowflakes(); // Stop snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopPumpkins(); // Stop pumpkins
+                } else if (randomNumber == 6) {
+                    displayImage.src = "smartcat.png";
+                    document.querySelector('body').style.background = "url('schoolbackground.png') center center / cover";
+                    audio.src = "Congratulations.mp3";
+                    stopSnowflakes(); // Stop snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                    stopPumpkins(); // Stop pumpkins
+                } else {
+                    displayImage.src = "halloweencat.png";
+                    document.querySelector('body').style.background = "url('halloweenbackground.png') center center / cover";
+                    audio.src = "Nightcore - Die Young.mp3";
+                    startPumpkins(); // Start pumpkins
+                    stopSnowflakes(); // Stop snowflakes
+                    stopNotes(); // Stop notes
+                    stopHearts(); // Stop hearts
+                    stopStars(); // Stop stars
+                }
+
+                // Reset and play audio
+                audio.loop = true;
+                if (!isMuted) {
+                    audio.play();
+                }
+            } else {
+                audio.pause();
+                audio.currentTime = 0;
+                displayImage.src = "pinkfluffykittenhappy.png";
+                document.querySelector('body').style.background = "hsl(82, 42%, 58%)";
+                stopSnowflakes(); // Stop snowflakes when returning to the original image
+                stopNotes(); // Stop notes when returning to the original image
+                stopHearts(); // Stop hearts when returning to the original image
+                stopStars(); // Stop stars when returning to the original image
+                stopPumpkins(); // Stop pumpkins when returning to the original image
+            }
+        }
+    </script>
+</body>
+</html>
